@@ -26,7 +26,14 @@ label_list = os.listdir(label_path)
 test_list = random.sample(image_list, random_num)
 # save test image to imagesTs和labelsTs
 for index,file_name in enumerate(test_list):
-    shutil.copy(os.path.join(image_path, file_name),os.path.join(imagesTs,'Test_Cervical_'+str(index)+'.jpg'))
+    # shutil.copy(os.path.join(image_path, file_name),os.path.join(imagesTs,'Test_Cervical_'+str(index)+'.jpg'))
+    cur_image = np.asarray(np.array(Image.open(os.path.join(image_path, file_name)).convert('L')))
+    w, h = cur_image.shape
+    cur_image = cur_image.reshape(1, w, h)
+    cur_image_nii = sitk.GetImageFromArray(cur_image)
+    cur_image_name = 'Test_Cervical_' + str(index) + '_0000.nii.gz'
+    sitk.WriteImage(cur_image_nii,os.path.join(imagesTs,cur_image_name))
+
     shutil.copy(os.path.join(label_path, file_name.replace(".jpg",".png")),os.path.join(labelsTs,'Test_Cervical_'+str(index)+'.png'))
 
 # 分理出需要训练的图片集
