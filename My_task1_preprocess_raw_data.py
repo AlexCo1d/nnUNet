@@ -5,8 +5,8 @@ from PIL import Image
 import shutil
 import SimpleITK as sitk
 import numpy as np
-
-from nnunet.utilities.file_conversions import convert_2d_image_to_nifti
+import json
+from nnunet.dataset_conversion.utils import generate_dataset_json
 
 raw_data_path = Path("/home/yangjiaqi/data/nnUNet/raw_Data/")  # 所有图片的父地址
 image_path = os.path.join(raw_data_path, "image")  # 图像
@@ -56,3 +56,7 @@ for index, file_name in enumerate(train_list):
 
     sitk.WriteImage(cur_image_nii,os.path.join(imagesTr,cur_image_name))
     sitk.WriteImage(cur_label_nii,os.path.join(labelsTr,cur_label_name))
+
+# generate json file
+generate_dataset_json(output_file=os.path.join(data_path,"dataset.json",), imagesTr_dir=imagesTr, imagesTs_dir=imagesTs,modalities=('gray')
+                      ,labels={0:'background',128:'tumor'},dataset_name='Task666_CervicalTumor',license='hands_off')
