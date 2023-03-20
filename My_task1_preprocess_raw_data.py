@@ -1,6 +1,8 @@
 import os
 import random
 from pathlib import Path
+
+import imageio
 from PIL import Image
 import shutil
 import SimpleITK as sitk
@@ -12,7 +14,13 @@ raw_data_path = Path("/home/yangjiaqi/data/nnUNet/raw_Data/")  # 所有图片的
 image_path = os.path.join(raw_data_path, "image")  # 图像
 label_path = os.path.join(raw_data_path, "label")  # 标签
 
-data_path = Path("/home/yangjiaqi/data/nnUNet/Data/nnUNet_raw/nnUNet_raw_data/Task666_CervicalTumor")  # 存储父地址
+#为满足nnUnet的要求，label必须连续，将所有label的128转化为1
+for file in os.listdir(label_path):
+    image=np.array(Image.open(os.path.join(label_path,file)))
+    image[image==128]=1
+    Image.fromarray(image).save(os.path.join(label_path,file))
+
+data_path = Path("/home/yangjiaqi/data/nnUNet/Data/nnUNet_raw/nnUNet_raw_data/Task066_CervicalTumor")  # 存储父地址
 imagesTr = os.path.join(data_path, "imagesTr")
 imagesTs = os.path.join(data_path, "imagesTs")
 labelsTr = os.path.join(data_path, "labelsTr")
@@ -60,5 +68,5 @@ for index, file_name in enumerate(train_list):
 # generate json file
 generate_dataset_json(output_file=os.path.join(data_path, "dataset.json", ), imagesTr_dir=imagesTr,
                       imagesTs_dir=imagesTs, modalities=('gray',)
-                      , labels={0: 'background', 128: 'tumor'}, dataset_name='Task666_CervicalTumor',
+                      , labels={0: 'background', 1: 'tumor'}, dataset_name='Task666_CervicalTumor',
                       license='hands_off')
