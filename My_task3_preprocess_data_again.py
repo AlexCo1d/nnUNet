@@ -53,17 +53,17 @@ def main():
     if not os.path.exists(O_label_path):
         os.makedirs(O_label_path)
 
-    # label_list = [s.replace('.jpg', '.png') for s in os.listdir(Image_path)]
-    # percentage = get_max_bounding_box_percentage(Label_path, label_list)
-    # print(f"max label box: {percentage}")
-    #
-    # set_percentage = (287/800, 103/600, 644/800, 503/600)
-    # print(f"set box: {set_percentage}")
-    #
-    # for image in os.listdir(Image_path):
-    #     crop_image(os.path.join(Image_path, image), os.path.join(Label_path, image.replace(".jpg", '.png')),
-    #                os.path.join(O_image_path, image), os.path.join(O_label_path, image.replace(".jpg", '.png')),
-    #                set_percentage)
+    label_list = [s.replace('.jpg', '.png') for s in os.listdir(Image_path)]
+    percentage = get_max_bounding_box_percentage(Label_path, label_list)
+    print(f"max label box: {percentage}")
+
+    set_percentage = (287/800, 103/600, 644/800, 503/600)
+    print(f"set box: {set_percentage}")
+
+    for image in os.listdir(Image_path):
+        crop_image(os.path.join(Image_path, image), os.path.join(Label_path, image.replace(".jpg", '.png')),
+                   os.path.join(O_image_path, image), os.path.join(O_label_path, image.replace(".jpg", '.png')),
+                   set_percentage)
 
     move_files_to_parent(O_image_path,final_image)
     move_files_to_parent(O_label_path,final_label)
