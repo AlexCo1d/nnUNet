@@ -25,7 +25,7 @@ imagesTr = os.path.join(data_path, "imagesTr")
 imagesTs = os.path.join(data_path, "imagesTs")
 labelsTr = os.path.join(data_path, "labelsTr")
 labelsTs = os.path.join(data_path, "labelsTs")
-random_num = 100  # 设置随机选测试图像数目
+random_num = 0  # 设置随机选测试图像数目
 
 image_list = os.listdir(image_path)
 label_list = os.listdir(label_path)
