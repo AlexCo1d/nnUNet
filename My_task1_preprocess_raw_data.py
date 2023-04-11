@@ -70,3 +70,14 @@ generate_dataset_json(output_file=os.path.join(data_path, "dataset.json", ), ima
                       imagesTs_dir=imagesTs, modalities=('gray',)
                       , labels={0: 'background', 1: 'tumor'}, dataset_name='Task666_CervicalTumor',
                       license='hands_off')
+
+def check_shape():
+    for file in os.listdir(imagesTr):
+        itkimage1=sitk.ReadImage(os.path.join(imagesTr,file))
+        itkimage2 = sitk.ReadImage(os.path.join(labelsTr, file.replace('_0000','')))
+        array=sitk.GetArrayFromImage(itkimage1).shape
+        array2=sitk.GetArrayFromImage(itkimage2).shape
+        if array != array2:
+            print('!!!')
+
+check_shape()
