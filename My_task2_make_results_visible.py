@@ -35,11 +35,14 @@ def main():
 
 
 def show_all_image(src: str, dst: str):
+    if not os.path.exists(dst):
+        os.makedirs(dst)
+
     src_list = os.listdir(src)
 
     for nii_file in src_list:
         cur_addr = os.path.join(src, nii_file)
-        nii = stik.ReadImage(cur_addr)
+        nii = sitk.ReadImage(cur_addr)
         img = sitk.GetArrayFromImage(nii)
         img = (img - img.min()) / (img.max() - img.min())
         img *= 255
