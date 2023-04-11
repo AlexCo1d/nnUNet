@@ -11,15 +11,15 @@ import cv2
 处理.avi文件和对应label .nii.gz文件的裁剪工作。
 '''
 def main():
-    father_path=''
+    father_path=r'D:\learning\UNNC 科研\202210_CSD超声标注_图片及视频\CSD视频及标注_15例\20220901_国妇婴_CSD超声视频及标注_4例'
     file_name=''
-    output_fpath=
+    output_fpath=r'D:\learning\UNNC 科研\data\nnUNet'
 
     input_video = os.path.join(father_path,file_name)  # single video'
     input_label=''
 
-    output_video=''
-    output_label=''
+    output_video=os.path.join(output_fpath,'video_nii')
+    output_label=os.path.join(output_fpath,'video_label_nii')
 
     x_start,y_start,x_end,y_end = ,,,
     process_video(input_video,output_video, x_start,y_start,x_end,y_end)
