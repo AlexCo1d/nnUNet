@@ -43,7 +43,7 @@ label_list = os.listdir(label_path)
 
 def main():
     process1()
-    prcess2()
+    process2()
 
 
 def process1():
