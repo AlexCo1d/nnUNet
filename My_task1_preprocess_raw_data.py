@@ -15,11 +15,12 @@ from nnunet.utilities.file_conversions import convert_2d_image_to_nifti
 set_label=1
 
 raw_data_path = Path("/home/yangjiaqi/data/nnUNet/raw_Data/")  # 所有图片的父地址
-image_path = os.path.join(raw_data_path, "image")  # 图像
-label_path = os.path.join(raw_data_path, "label")  # 标签
 task_name = 'Task067_Cervical2D'
 base=join(raw_data_path,'Task067')
-target_base = join(nnUNet_raw_data, task_name)
+target_base = join("/home/yangjiaqi/data/nnUNet/Data/nnUNet_raw/nnUNet_raw_data/", task_name)
+
+image_path = os.path.join(base, "image")  # 图像
+label_path = os.path.join(base, "label")  # 标签
 target_imagesTr = join(target_base, "imagesTr")
 target_imagesTs = join(target_base, "imagesTs")
 target_labelsTs = join(target_base, "labelsTs")
@@ -42,7 +43,7 @@ label_list = os.listdir(label_path)
 #     Image.fromarray(image).save(os.path.join(label_path,file))
 
 def main():
-    process1()
+    #process1()
     process2()
 
 
@@ -121,7 +122,7 @@ def process2():
 
         # this utility will convert 2d images that can be read by skimage.io.imread to nifti. You don't need to do anything.
         # if this throws an error for your images, please just look at the code for this function and adapt it to your needs
-        convert_2d_image_to_nifti(input_image_file, output_image_file, is_seg=False)
+        convert_2d_image_to_nifti(input_image_file.replace(".png",".jpg"), output_image_file, is_seg=False)
 
         # the labels are stored as 0: background, 255: road. We need to convert the 255 to 1 because nnU-Net expects
         # the labels to be consecutive integers. This can be achieved with setting a transform
