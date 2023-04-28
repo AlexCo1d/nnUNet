@@ -107,7 +107,7 @@ def blend_raw_images(label_path,image_path,output_path,color_map,alpha=0.5):
         # label[label!=0]=1
         # t=np.unique(label)
         image=Image.open(os.path.join(image_path,label_name).replace('.png','.jpg'))
-        image=Image.merge('RGB',(image,image,image))
+        image=image.convert('RGB')
         blend_image=blend_images(Image.fromarray(label),image,alpha)
         blend_image.save(os.path.join(output_path,label_name).replace('.png','.jpg'))
 
