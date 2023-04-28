@@ -2,11 +2,13 @@ import os
 from pathlib import Path
 import SimpleITK as sitk
 import cv2
+import numpy as np
+from PIL import Image
 
 
-data_path = Path("/home/yangjiaqi/data/nnUNet/Data/nnUNet_trained_model/nnUNet/2d/Task066_CervicalTumor"
+data_path = Path("/home/yangjiaqi/data/nnUNet/Data/nnUNet_trained_model/nnUNet/2d/Task067_Cervical2D"
                  "/nnUNetTrainerV2__nnUNetPlansv2.1")  # 存储父地址
-raw_data_path = Path("/home/yangjiaqi/data/nnUNet/Data/nnUNet_raw/nnUNet_raw_data/Task066_CervicalTumor/")
+raw_data_path = Path("/home/yangjiaqi/data/nnUNet/Data/nnUNet_raw/nnUNet_raw_data/Task067_Cervical2D/")
 
 # from
 imagesTr_path = os.path.join(raw_data_path, "imagesTr")
@@ -23,18 +25,57 @@ to_image_pp_path = os.path.join(raw_data_path, "o_infersimage_pp")
 to_label_pp_path = os.path.join(raw_data_path, "o_inferslabel_pp")
 to_raw_labelsTr_path = os.path.join(raw_data_path, "o_labelsTr")
 to_raw_imagesTr_path = os.path.join(raw_data_path, "o_imagesTr")
+to_blend_gt_path=os.path.join(raw_data_path,'blend_gt')
+to_blend_predict_path=os.path.join(raw_data_path,'blend_predict')
 
+color_map = [(0, 0, 0), (0, 255, 0), (0, 128, 0), (128, 128, 0), (128, 0, 128), (0, 128, 128),
+               (128, 128, 128), (64, 0, 0), (192, 0, 0), (64, 128, 0), (192, 128, 0), (64, 0, 128),
+               (192, 0, 128),
+               (64, 128, 128), (192, 128, 128), (0, 64, 0), (128, 64, 0), (0, 192, 0), (128, 192, 0),
+               (0, 64, 128), (128, 64, 12)]
+alpha=0.5
 
 def main():
     # 调整此处参数即可展现所有的图像
-    show_all_image(imagesTr_path,to_raw_imagesTr_path)
-    show_all_image(labelsTr_path,to_raw_labelsTr_path)
-    show_all_image(imageTr_pp_path,to_image_pp_path)
-    show_all_image(labelTr_path,to_label_path)
-    show_all_image(labelTr_pp_path,to_label_pp_path)
+    # show_all_image(imagesTr_path,to_raw_imagesTr_path)
+    # show_all_image(labelsTr_path,to_raw_labelsTr_path)
+    # show_all_image(imageTr_pp_path,to_image_pp_path)
+    # show_all_image(labelTr_path,to_label_path)
+    # show_all_image(labelTr_pp_path,to_label_pp_path)
+    #show_label(r'D:\learning\UNNC 科研\data\nnUNet\bal_label',r'D:\learning\UNNC 科研\data\nnUNet\test_label')
+    blend_raw_images(to_raw_labelsTr_path,to_raw_imagesTr_path,to_blend_gt_path,color_map=color_map)
+    blend_raw_images(to_label_pp_path,to_image_pp_path,to_blend_predict_path,color_map=color_map)
+
+
+def show_label(src: str, dst: str):
+    '''
+    从01label可视化
+    Args:
+        src:
+        dst:
+
+    Returns:
+
+    '''
+    if not os.path.exists(dst):
+        os.makedirs(dst)
+    for label in os.listdir(src):
+        im=Image.open(os.path.join(src,label))
+        im=np.array(im)
+        im[im!=0]=128
+        Image.fromarray(im).save(os.path.join(dst,label))
 
 
 def show_all_image(src: str, dst: str):
+    '''
+    从nii文件可视化
+    Args:
+        src:
+        dst:
+
+    Returns:
+
+    '''
     if not os.path.exists(dst):
         os.makedirs(dst)
 
@@ -48,6 +89,59 @@ def show_all_image(src: str, dst: str):
         img *= 255
         cv2.imwrite(os.path.join(dst, nii_file.replace('.nii.gz', '.png')), img)
 
+def blend_raw_images(label_path,image_path,output_path,color_map,alpha=0.5):
+    if not os.path.exists(output_path):
+        os.makedirs(output_path)
+    # 将2个文件夹的图像融合输出进新文件夹
+    for label_name in os.listdir(label_path):
+        label=np.array(Image.open(os.path.join(label_path,label_name)))
+        label=convert_to_rgb(label,colormap=color_map)
+        image=np.array(Image.open(os.path.join(image_path,label_name.replace('.png','.jpg'))))
+        blend_image=blend_images(Image.fromarray(label),Image.fromarray(image),alpha)
+        blend_image.save(os.path.join(output_path,label_name).replace('.png','.jpg'))
+
+def blend_images(image1: Image.Image, image2: Image.Image, alpha: float) -> Image.Image:
+    """
+    融合两幅RGB图像，设定指定的alpha，对于第一张图像零像素位置，完全使用第二张图像，其余位置按alpha进行融合。
+
+    Args:
+        image1 (Image.Image): 第一张RGB图像,label
+        image2 (Image.Image): 第二张RGB图像,image
+        alpha (float): 融合时的权重，范围为 0.0 到 1.0。
+
+    Returns:
+        Image.Image: 融合后的图像。
+    """
+
+    # 将PIL.Image转换为numpy数组
+    image1_np = np.array(image1)
+    image2_np = np.array(image2)
+
+    # 创建一个空白的输出图像（与输入图像大小相同）
+    blended_np = np.zeros_like(image1_np)
+
+    # 找到第一张图像中非零像素的位置
+    non_zero_indices = np.any(image1_np != 0, axis=-1)
+
+    # 对于第一张图像零像素位置，完全使用第二张图像
+    blended_np[~non_zero_indices] = image2_np[~non_zero_indices]
+
+    # 按alpha进行融合的其余位置
+    blended_np[non_zero_indices] = (1 - alpha) * image1_np[non_zero_indices] + alpha * image2_np[non_zero_indices]
+
+    # 将numpy数组转换回PIL.Image
+    blended_image = Image.fromarray(blended_np.astype(np.uint8))
+
+    return blended_image
+
+def convert_to_rgb(label_img, colormap):
+    rgb_img = np.zeros((label_img.shape[0], label_img.shape[1], 3), dtype=np.uint8)
+
+    for label in range(len(colormap)):
+        color = colormap[label]
+        rgb_img[np.where(label_img == label)] = color
+
+    return rgb_img
 
 if __name__ == '__main__':
     main()

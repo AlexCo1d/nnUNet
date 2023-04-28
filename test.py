@@ -7,7 +7,7 @@ import numpy as np
 from PIL import Image
 from matplotlib import pyplot as plt
 
-# with open("summary.json", "r") as file:
+# with open("summary2.json", "r") as file:
 #     data = json.load(file)
 #
 # dice_values = []
@@ -18,15 +18,17 @@ from matplotlib import pyplot as plt
 # count=0
 # count1=0
 # sum=0
-# for i in dice_values:
+# index=0
+# for index,i in enumerate(dice_values):
+#
 #     if not math.isnan(i):
-#         sum+=i
 #         count+=1
 #         if i==0:
 #             count1+=1
-# t=sum/(count-count1)
-# #95个非nan值。95/221
-# #363/728
+# print(f'count:{count}count1:{count1}index:{index}')
+# 95个非nan值。95/221
+# 363/728
+# 21/111 199
 # import seaborn as sns
 # filtered_data = [x for x in dice_values if not math.isnan(x)]
 #
@@ -73,11 +75,24 @@ count = 0
 
 from skimage import io
 fpath=r'D:\learning\UNNC 科研\data\nnUNet\bal_label'
-for image in os.listdir(fpath):
-    img = Image.open(os.path.join(fpath,image))
-    img=np.array(img)
-    # print(io.imread(os.path.join(fpath,image)).shape)
-    img[img!=0]=1
-    # 将图像转换为单通道（灰度）
-    gray_image = Image.fromarray(img).convert('L')
-    gray_image.save(os.path.join(fpath,image))
+# for image in os.listdir(fpath):
+#     img = Image.open(os.path.join(fpath,image))
+#     img=np.array(img)
+#     # print(io.imread(os.path.join(fpath,image)).shape)
+#     img[img!=0]=1
+#     # 将图像转换为单通道（灰度）
+#     gray_image = Image.fromarray(img).convert('L')
+#     gray_image.save(os.path.join(fpath,image))
+
+def neg_rate(src:str):
+    index=0
+    count=0
+    for index,label in enumerate(os.listdir(src)):
+        img=Image.open(os.path.join(src,label))
+        img=np.array(img)
+        if int(*(np.unique(img).shape))==1:
+            count+=1
+    print(f'neg:total{count}/{index+1}')
+
+
+neg_rate(r'D:\learning\UNNC 科研\data\nnUNet\final_image_plus_video\label')
