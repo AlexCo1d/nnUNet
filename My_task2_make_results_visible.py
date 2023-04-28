@@ -6,8 +6,7 @@ import numpy as np
 from PIL import Image
 
 
-data_path = Path("/home/yangjiaqi/data/nnUNet/Data/nnUNet_trained_model/nnUNet/2d/Task067_Cervical2D"
-                 "/nnUNetTrainerV2__nnUNetPlansv2.1")  # 存储父地址
+data_path = Path("/home/yangjiaqi/data/nnUNet/Data/nnUNet_trained_models/nnUNet/2d/Task066_CervicalTumor/nnUNetTrainerV2__nnUNetPlansv2.1/")  # 存储父地址
 raw_data_path = Path("/home/yangjiaqi/data/nnUNet/Data/nnUNet_raw/nnUNet_raw_data/Task066_CervicalTumor/")
 
 # from
@@ -44,12 +43,12 @@ def main():
     # show_all_image(labelTr_pp_path,to_label_pp_path)
     #show_label(r'D:\learning\UNNC 科研\data\nnUNet\bal_label',r'D:\learning\UNNC 科研\data\nnUNet\test_label')
 
-    for image in os.listdir(to_raw_imagesTr_path):
-        new_image=image.replace('_0000','')
-        os.rename(os.path.join(to_raw_imagesTr_path,image),os.path.join(to_raw_imagesTr_path,new_image))
-
+    # for image in os.listdir(to_raw_imagesTr_path):
+    #     new_image=image.replace('_0000','')
+    #     os.rename(os.path.join(to_raw_imagesTr_path,image),os.path.join(to_raw_imagesTr_path,new_image))
+    #
     blend_raw_images(to_raw_labelsTr_path,to_raw_imagesTr_path,to_blend_gt_path,color_map=color_map)
-    blend_raw_images(to_label_pp_path,to_image_pp_path,to_blend_predict_path,color_map=color_map)
+    blend_raw_images(to_label_pp_path,to_raw_imagesTr_path,to_blend_predict_path,color_map=color_map)
 
 
 def show_label(src: str, dst: str):
@@ -87,12 +86,14 @@ def show_all_image(src: str, dst: str):
     src_list = os.listdir(src)
 
     for nii_file in src_list:
-        cur_addr = os.path.join(src, nii_file)
-        nii = sitk.ReadImage(cur_addr)
-        img = sitk.GetArrayFromImage(nii)
-        img = (img - img.min()) / (img.max() - img.min())
-        img *= 255
-        cv2.imwrite(os.path.join(dst, nii_file.replace('.nii.gz', '.png')), img)
+        if nii_file.endswith('.nii.gz'):
+            cur_addr = os.path.join(src, nii_file)
+            nii = sitk.ReadImage(cur_addr)
+            img = sitk.GetArrayFromImage(nii).squeeze()
+            # img = (img - img.min()) / (img.max() - img.min())
+            # img *= 255
+            Image.fromarray(img).save(os.path.join(dst, nii_file.replace('.nii.gz', '.png')))
+        #cv2.imwrite(os.path.join(dst, nii_file.replace('.nii.gz', '.jpg')), img)
 
 def blend_raw_images(label_path,image_path,output_path,color_map,alpha=0.5):
     if not os.path.exists(output_path):
@@ -100,10 +101,15 @@ def blend_raw_images(label_path,image_path,output_path,color_map,alpha=0.5):
     # 将2个文件夹的图像融合输出进新文件夹
     for label_name in os.listdir(label_path):
         label=np.array(Image.open(os.path.join(label_path,label_name)))
+        # t=np.unique(label)
         label=convert_to_rgb(label,colormap=color_map)
-        image=np.array(Image.open(os.path.join(image_path,label_name)))
-        blend_image=blend_images(Image.fromarray(label),Image.fromarray(image),alpha)
-        blend_image.save(os.path.join(output_path,label_name))
+        # t = np.unique(label)
+        # label[label!=0]=1
+        # t=np.unique(label)
+        image=Image.open(os.path.join(image_path,label_name).replace('.png','.jpg'))
+        image=Image.merge('RGB',(image,image,image))
+        blend_image=blend_images(Image.fromarray(label),image,alpha)
+        blend_image.save(os.path.join(output_path,label_name).replace('.png','.jpg'))
 
 def blend_images(image1: Image.Image, image2: Image.Image, alpha: float) -> Image.Image:
     """

@@ -26,7 +26,7 @@ target_imagesTs = join(target_base, "imagesTs")
 target_labelsTs = join(target_base, "labelsTs")
 target_labelsTr = join(target_base, "labelsTr")
 
-data_path = Path("/home/yangjiaqi/data/nnUNet/Data/nnUNet_raw/nnUNet_raw_data/Task066_CervicalTumor")  # 存储父地址
+data_path = Path("/home/yangjiaqi/data/nnUNet/Data/nnUNet_raw/nnUNet_raw_data/Task067_Cervical2D")  # 存储父地址
 imagesTr = os.path.join(data_path, "imagesTr")
 imagesTs = os.path.join(data_path, "imagesTs")
 labelsTr = os.path.join(data_path, "labelsTr")
@@ -43,8 +43,8 @@ label_list = os.listdir(label_path)
 #     Image.fromarray(image).save(os.path.join(label_path,file))
 
 def main():
-    #process1()
-    process2()
+    process1()
+    #process2()
 
 
 def process1():
@@ -75,18 +75,20 @@ def process1():
         cur_label = cur_label.reshape(1, w, h)
         cur_image_name = 'Cervical_' + str(index) + '_0000.nii.gz'
         cur_label_name = 'Cervical_' + str(index) + '.nii.gz'
-
+        print(np.shape(cur_image))
+        spac = (999, 1, 1)
         # 转化为ntfi格式存储进各自需要的路径
         cur_image_nii = sitk.GetImageFromArray(cur_image)
         cur_label_nii = sitk.GetImageFromArray(cur_label)
-
+        cur_label_nii.SetSpacing(list(spac)[::-1])
+        cur_image_nii.SetSpacing(list(spac)[::-1])
         sitk.WriteImage(cur_image_nii, os.path.join(imagesTr, cur_image_name))
         sitk.WriteImage(cur_label_nii, os.path.join(labelsTr, cur_label_name))
 
     # generate json file
     generate_dataset_json(output_file=os.path.join(data_path, "dataset.json", ), imagesTr_dir=imagesTr,
                           imagesTs_dir=imagesTs, modalities=('gray',)
-                          , labels={0: 'background', 1: 'tumor'}, dataset_name='Task666_CervicalTumor',
+                          , labels={0: 'background', 1: 'tumor'}, dataset_name='Task067_CervicalTumor',
                           license='hands_off')
 
 
@@ -126,6 +128,7 @@ def process2():
 
         # the labels are stored as 0: background, 255: road. We need to convert the 255 to 1 because nnU-Net expects
         # the labels to be consecutive integers. This can be achieved with setting a transform
+        print(input_segmentation_file)
         convert_2d_image_to_nifti(input_segmentation_file, output_seg_file, is_seg=True,
                                   transform=lambda x: (x == set_label).astype(int))
 
