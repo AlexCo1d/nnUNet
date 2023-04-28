@@ -8,7 +8,7 @@ from PIL import Image
 
 data_path = Path("/home/yangjiaqi/data/nnUNet/Data/nnUNet_trained_model/nnUNet/2d/Task067_Cervical2D"
                  "/nnUNetTrainerV2__nnUNetPlansv2.1")  # 存储父地址
-raw_data_path = Path("/home/yangjiaqi/data/nnUNet/Data/nnUNet_raw/nnUNet_raw_data/Task067_Cervical2D/")
+raw_data_path = Path("/home/yangjiaqi/data/nnUNet/Data/nnUNet_raw/nnUNet_raw_data/Task066_CervicalTumor/")
 
 # from
 imagesTr_path = os.path.join(raw_data_path, "imagesTr")
