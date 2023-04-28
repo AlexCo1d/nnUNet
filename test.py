@@ -74,25 +74,33 @@ count = 0
 
 
 from skimage import io
-fpath=r'D:\learning\UNNC 科研\data\nnUNet\bal_label'
-# for image in os.listdir(fpath):
-#     img = Image.open(os.path.join(fpath,image))
-#     img=np.array(img)
-#     # print(io.imread(os.path.join(fpath,image)).shape)
-#     img[img!=0]=1
-#     # 将图像转换为单通道（灰度）
-#     gray_image = Image.fromarray(img).convert('L')
-#     gray_image.save(os.path.join(fpath,image))
+# fpath=r'D:\learning\UNNC 科研\data\nnUNet\bal_label'
+# # for image in os.listdir(fpath):
+# #     img = Image.open(os.path.join(fpath,image))
+# #     img=np.array(img)
+# #     # print(io.imread(os.path.join(fpath,image)).shape)
+# #     img[img!=0]=1
+# #     # 将图像转换为单通道（灰度）
+# #     gray_image = Image.fromarray(img).convert('L')
+# #     gray_image.save(os.path.join(fpath,image))
+#
+# def neg_rate(src:str):
+#     index=0
+#     count=0
+#     for index,label in enumerate(os.listdir(src)):
+#         img=Image.open(os.path.join(src,label))
+#         img=np.array(img)
+#         if int(*(np.unique(img).shape))==1:
+#             count+=1
+#     print(f'neg:total{count}/{index+1}')
+#
+#
+# neg_rate(r'D:\learning\UNNC 科研\data\nnUNet\final_image_plus_video\label')\
 
-def neg_rate(src:str):
-    index=0
-    count=0
-    for index,label in enumerate(os.listdir(src)):
-        img=Image.open(os.path.join(src,label))
-        img=np.array(img)
-        if int(*(np.unique(img).shape))==1:
-            count+=1
-    print(f'neg:total{count}/{index+1}')
+import pickle
+path='/home/yangjiaqi/data/nnUNet/Data/nnUNet_trained_models/nnUNet/2d/Task067_Cervical2D/nnUNetTrainerV2__nnUNetPlansv2.1/'
 
+f = open(path, 'rb')
+data = pickle.load(f)
 
-neg_rate(r'D:\learning\UNNC 科研\data\nnUNet\final_image_plus_video\label')
+print(data)
