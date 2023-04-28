@@ -7,14 +7,15 @@ import SimpleITK as sitk
 
 
 classNum=2
-data_path = Path("/home/yangjiaqi/data/nnUNet/Data/nnUNet_trained_models/nnUNet/2d/Task067_Cervical2D"
+# data_path = Path("/home/yangjiaqi/data/nnUNet/Data/nnUNet_trained_models/nnUNet/2d/Task067_Cervical2D"
+#                  "/nnUNetTrainerV2__nnUNetPlansv2.1/")  # 存储父地址
+data_path = Path("/home/yangjiaqi/data/nnUNet/Data/nnUNet_trained_models/nnUNet/2d/Task066_CervicalTumor"
                  "/nnUNetTrainerV2__nnUNetPlansv2.1/")  # 存储父地址
-
 # from
 
 LabelPath = os.path.join(data_path,'gt_niftis') # total 1002 501+501
 #  预测图像文件夹
-PredictPath = os.path.join(data_path,'fold_3','validation_raw_postprocessed') # total 201
+PredictPath = os.path.join(data_path,'fold_0','validation_raw_postprocessed') # total 201
 
 def ConfusionMatrix(numClass, imgPredict, Label):
     #  返回混淆矩阵
