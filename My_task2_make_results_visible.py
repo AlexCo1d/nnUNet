@@ -43,10 +43,10 @@ def main():
     show_all_image(labelTr_pp_path,to_label_pp_path)
     #show_label(r'D:\learning\UNNC 科研\data\nnUNet\bal_label',r'D:\learning\UNNC 科研\data\nnUNet\test_label')
 
-    # for image in os.listdir(to_raw_imagesTr_path):
-    #     new_image=image.replace('_0000','')
-    #     os.rename(os.path.join(to_raw_imagesTr_path,image),os.path.join(to_raw_imagesTr_path,new_image))
-    #
+    for image in os.listdir(to_raw_imagesTr_path):
+        new_image=image.replace('_0000','')
+        os.rename(os.path.join(to_raw_imagesTr_path,image),os.path.join(to_raw_imagesTr_path,new_image))
+
     blend_raw_images(to_raw_labelsTr_path,to_raw_imagesTr_path,to_blend_gt_path,color_map=color_map)
     blend_raw_images(to_label_pp_path,to_raw_imagesTr_path,to_blend_predict_path,color_map=color_map)
 
@@ -106,10 +106,10 @@ def blend_raw_images(label_path,image_path,output_path,color_map,alpha=0.5):
         # t = np.unique(label)
         # label[label!=0]=1
         # t=np.unique(label)
-        image=Image.open(os.path.join(image_path,label_name).replace('.png','.jpg'))
-        image=image.convert('RGB')
+        image=Image.open(os.path.join(image_path,label_name))
+        # image=image.convert('RGB')
         blend_image=blend_images(Image.fromarray(label),image,alpha)
-        blend_image.save(os.path.join(output_path,label_name).replace('.png','.jpg'))
+        blend_image.save(os.path.join(output_path,label_name.replace('png','jpg')))
 
 def blend_images(image1: Image.Image, image2: Image.Image, alpha: float) -> Image.Image:
     """
