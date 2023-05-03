@@ -6,16 +6,16 @@ import numpy as np
 from PIL import Image
 
 
-data_path = Path("/home/yangjiaqi/data/nnUNet/Data/nnUNet_trained_models/nnUNet/2d/Task066_CervicalTumor/nnUNetTrainerV2__nnUNetPlansv2.1/")  # 存储父地址
-raw_data_path = Path("/home/yangjiaqi/data/nnUNet/Data/nnUNet_raw/nnUNet_raw_data/Task066_CervicalTumor/")
+data_path = Path("/home/yangjiaqi/data/nnUNet/Data/nnUNet_trained_models/nnUNet/2d/Task067_Cervical2D/nnUNetTrainerV2__nnUNetPlansv2.1/")  # 存储父地址
+raw_data_path = Path("/home/yangjiaqi/data/nnUNet/Data/nnUNet_raw/nnUNet_raw_data/Task067_Cervical2D/")
 
 # from
 imagesTr_path = os.path.join(raw_data_path, "imagesTr")
 labelsTr_path = os.path.join(raw_data_path, "labelsTr")
 imageTr_pp_path = os.path.join(data_path, "cv_niftis_postprocessed")  # postprocessed image whole, 3644
-labelTr_pp_path = os.path.join(os.path.join(data_path, "fold_4"),
+labelTr_pp_path = os.path.join(os.path.join(data_path, "fold_3"),
                                'validation_raw_postprocessed')  # postprocessed label for test, 728
-labelTr_path = os.path.join(os.path.join(data_path, "fold_4"),
+labelTr_path = os.path.join(os.path.join(data_path, "fold_3"),
                             'validation_raw')  # raw label for test, 728, contain other stuff
 
 # to
@@ -36,11 +36,11 @@ alpha=0.5
 
 def main():
     # 调整此处参数即可展现所有的图像
-    # show_all_image(imagesTr_path,to_raw_imagesTr_path)
-    # show_all_image(labelsTr_path,to_raw_labelsTr_path)
+    show_all_image(imagesTr_path,to_raw_imagesTr_path)
+    show_all_image(labelsTr_path,to_raw_labelsTr_path)
     # show_all_image(imageTr_pp_path,to_image_pp_path)
     # show_all_image(labelTr_path,to_label_path)
-    # show_all_image(labelTr_pp_path,to_label_pp_path)
+    show_all_image(labelTr_pp_path,to_label_pp_path)
     #show_label(r'D:\learning\UNNC 科研\data\nnUNet\bal_label',r'D:\learning\UNNC 科研\data\nnUNet\test_label')
 
     # for image in os.listdir(to_raw_imagesTr_path):
