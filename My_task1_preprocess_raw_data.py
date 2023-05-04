@@ -15,10 +15,11 @@ from nnunet.utilities.file_conversions import convert_2d_image_to_nifti
 set_label=1
 
 raw_data_path = Path("/home/yangjiaqi/data/nnUNet/raw_Data/")  # 所有图片的父地址
-task_name = 'Task067_Cervical2D'
-base=join(raw_data_path,'Task067')
+task_name = 'Task068_DDTI'
+base=join(raw_data_path,'Task068')
 target_base = join("/home/yangjiaqi/data/nnUNet/Data/nnUNet_raw/nnUNet_raw_data/", task_name)
-
+if not os.path.exists(target_base):
+    os.makedirs(target_base)
 image_path = os.path.join(base, "image")  # 图像
 label_path = os.path.join(base, "label")  # 标签
 target_imagesTr = join(target_base, "imagesTr")
@@ -48,33 +49,33 @@ def main():
 
 
 def process1():
-    # 随机采样分离出测试图片
-    test_list = random.sample(image_list, random_num)
-    # save test image to imagesTs和labelsTs
-    for index, file_name in enumerate(test_list):
-        # shutil.copy(os.path.join(image_path, file_name),os.path.join(imagesTs,'Test_Cervical_'+str(index)+'.jpg'))
-        cur_image = np.asarray(np.array(Image.open(os.path.join(image_path, file_name)).convert('L')))
-        w, h = cur_image.shape
-        cur_image = cur_image.reshape(1, w, h)
-        cur_image_nii = sitk.GetImageFromArray(cur_image)
-        cur_image_name = 'Test_Cervical_' + str(index) + '_0000.nii.gz'
-        sitk.WriteImage(cur_image_nii, os.path.join(imagesTs, cur_image_name))
+    # # 随机采样分离出测试图片
+    # test_list = random.sample(image_list, random_num)
+    # # save test image to imagesTs和labelsTs
+    # for index, file_name in enumerate(test_list):
+    #     # shutil.copy(os.path.join(image_path, file_name),os.path.join(imagesTs,'Test_Cervical_'+str(index)+'.jpg'))
+    #     cur_image = np.asarray(np.array(Image.open(os.path.join(image_path, file_name)).convert('L')))
+    #     w, h = cur_image.shape
+    #     cur_image = cur_image.reshape(1, w, h)
+    #     cur_image_nii = sitk.GetImageFromArray(cur_image)
+    #     cur_image_name = 'Test_Cervical_' + str(index) + '_0000.nii.gz'
+    #     sitk.WriteImage(cur_image_nii, os.path.join(imagesTs, cur_image_name))
+    #
+    #     shutil.copy(os.path.join(label_path, file_name.replace(".jpg", ".png")),
+    #                 os.path.join(labelsTs, 'Test_Cervical_' + str(index) + '.png'))
+    #
+    # # 分理出需要训练的图片集
+    # train_list = list(set(image_list) - set(test_list))  # end with jpg
 
-        shutil.copy(os.path.join(label_path, file_name.replace(".jpg", ".png")),
-                    os.path.join(labelsTs, 'Test_Cervical_' + str(index) + '.png'))
-
-    # 分理出需要训练的图片集
-    train_list = list(set(image_list) - set(test_list))  # end with jpg
-
-    for index, file_name in enumerate(train_list):
+    for index, file_name in enumerate(image_list):
         # 读取文件并将其转为array
         cur_image = np.asarray(np.array(Image.open(os.path.join(image_path, file_name)).convert('L')))
         cur_label = np.asarray(np.array(Image.open(os.path.join(label_path, file_name.replace(".jpg", '.png')))))
         w, h = cur_image.shape
         cur_image = cur_image.reshape(1, w, h)
         cur_label = cur_label.reshape(1, w, h)
-        cur_image_name = 'Cervical_' + str(index) + '_0000.nii.gz'
-        cur_label_name = 'Cervical_' + str(index) + '.nii.gz'
+        cur_image_name = 'DDTI_' + str(index) + '_0000.nii.gz'
+        cur_label_name = 'DDTI_' + str(index) + '.nii.gz'
         print(np.shape(cur_image))
         spac = (999, 1, 1)
         # 转化为ntfi格式存储进各自需要的路径
@@ -86,9 +87,9 @@ def process1():
         sitk.WriteImage(cur_label_nii, os.path.join(labelsTr, cur_label_name))
 
     # generate json file
-    generate_dataset_json(output_file=os.path.join(data_path, "dataset.json", ), imagesTr_dir=imagesTr,
+    generate_dataset_json(output_file=os.path.join(target_base, "dataset.json", ), imagesTr_dir=imagesTr,
                           imagesTs_dir=imagesTs, modalities=('gray',)
-                          , labels={0: 'background', 1: 'tumor'}, dataset_name='Task067_CervicalTumor',
+                          , labels={0: 'background', 1: 'tumor'}, dataset_name='Task068_DDTI',
                           license='hands_off')
 
 
@@ -124,13 +125,12 @@ def process2():
 
         # this utility will convert 2d images that can be read by skimage.io.imread to nifti. You don't need to do anything.
         # if this throws an error for your images, please just look at the code for this function and adapt it to your needs
-        convert_2d_image_to_nifti(input_image_file.replace(".png",".jpg"), output_image_file, is_seg=False)
+        convert_2d_image_to_nifti(input_image_file, output_image_file, is_seg=False)
 
         # the labels are stored as 0: background, 255: road. We need to convert the 255 to 1 because nnU-Net expects
         # the labels to be consecutive integers. This can be achieved with setting a transform
         print(input_segmentation_file)
-        convert_2d_image_to_nifti(input_segmentation_file, output_seg_file, is_seg=True,
-                                  transform=lambda x: (x == set_label).astype(int))
+        convert_2d_image_to_nifti(input_segmentation_file, output_seg_file, is_seg=True)
 
     # now do the same for the test set
     # labels_dir_ts = join(base, 'testing', 'output')
