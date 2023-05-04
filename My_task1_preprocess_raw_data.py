@@ -74,8 +74,8 @@ def process1():
         w, h = cur_image.shape
         cur_image = cur_image.reshape(1, w, h)
         cur_label = cur_label.reshape(1, w, h)
-        cur_image_name = 'DDTI_' + str(index) + '_0000.nii.gz'
-        cur_label_name = 'DDTI_' + str(index) + '.nii.gz'
+        cur_image_name = 'DDTI_' + file_name.replace('.png','') + '_0000.nii.gz'
+        cur_label_name = 'DDTI_' + file_name.replace('.png','') + '.nii.gz'
         print(np.shape(cur_image))
         spac = (999, 1, 1)
         # 转化为ntfi格式存储进各自需要的路径
@@ -83,12 +83,12 @@ def process1():
         cur_label_nii = sitk.GetImageFromArray(cur_label)
         cur_label_nii.SetSpacing(list(spac)[::-1])
         cur_image_nii.SetSpacing(list(spac)[::-1])
-        sitk.WriteImage(cur_image_nii, os.path.join(imagesTr, cur_image_name))
-        sitk.WriteImage(cur_label_nii, os.path.join(labelsTr, cur_label_name))
+        sitk.WriteImage(cur_image_nii, os.path.join(target_imagesTr, cur_image_name))
+        sitk.WriteImage(cur_label_nii, os.path.join(target_labelsTr, cur_label_name))
 
     # generate json file
-    generate_dataset_json(output_file=os.path.join(target_base, "dataset.json", ), imagesTr_dir=imagesTr,
-                          imagesTs_dir=imagesTs, modalities=('gray',)
+    generate_dataset_json(output_file=os.path.join(target_base, "dataset.json", ), imagesTr_dir=target_imagesTr,
+                          imagesTs_dir=target_imagesTs, modalities=('gray',)
                           , labels={0: 'background', 1: 'tumor'}, dataset_name='Task068_DDTI',
                           license='hands_off')
 
