@@ -98,7 +98,7 @@ from skimage import io
 # neg_rate(r'D:\learning\UNNC 科研\data\nnUNet\final_image_plus_video\label')\
 
 import pickle
-path='/home/yangjiaqi/data/nnUNet/Data/nnUNet_trained_models/nnUNet/2d/Task067_Cervical2D/nnUNetTrainerV2__nnUNetPlansv2.1/'
+path='/home/yangjiaqi/data/nnUNet/Data/nnUNet_trained_models/nnUNet/2d/Task067_Cervical2D/nnUNetTrainerV2__nnUNetPlansv2.1/plans.pkl'
 
 f = open(path, 'rb')
 data = pickle.load(f)
