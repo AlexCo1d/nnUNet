@@ -71,13 +71,13 @@ def process1():
         # 读取文件并将其转为array
         cur_image = np.asarray(np.array(Image.open(os.path.join(image_path, file_name)).convert('L')))
         cur_label = np.asarray(np.array(Image.open(os.path.join(label_path, file_name.replace(".jpg", '.png')))))
-        print(np.unique(cur_label))
-        cur_label[cur_label!=0]=1
+        # print(np.unique(cur_label))
+        # cur_label[cur_label!=0]=1
         w, h = cur_image.shape
         cur_image = cur_image.reshape(1, w, h)
         cur_label = cur_label.reshape(1, w, h)
-        cur_image_name = 'DDTI_' + file_name.replace('.png','') + '_0000.nii.gz'
-        cur_label_name = 'DDTI_' + file_name.replace('.png','') + '.nii.gz'
+        cur_image_name = file_name.replace('.jpg','') + '_0000.nii.gz'
+        cur_label_name = file_name.replace('.png','') + '.nii.gz'
         print(np.shape(cur_image))
         spac = (999, 1, 1)
         # 转化为ntfi格式存储进各自需要的路径
