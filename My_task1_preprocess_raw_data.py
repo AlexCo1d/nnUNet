@@ -15,8 +15,8 @@ from nnunet.utilities.file_conversions import convert_2d_image_to_nifti
 set_label=1
 
 raw_data_path = Path("/home/yangjiaqi/data/nnUNet/raw_Data/")  # 所有图片的父地址
-task_name = 'Task068_DDTI'
-base=join(raw_data_path,'Task068')
+task_name = 'Task070_CSD'
+base=join(raw_data_path,'Task070')
 target_base = join("/home/yangjiaqi/data/nnUNet/Data/nnUNet_raw/nnUNet_raw_data/", task_name)
 if not os.path.exists(target_base):
     os.makedirs(target_base)
@@ -71,6 +71,8 @@ def process1():
         # 读取文件并将其转为array
         cur_image = np.asarray(np.array(Image.open(os.path.join(image_path, file_name)).convert('L')))
         cur_label = np.asarray(np.array(Image.open(os.path.join(label_path, file_name.replace(".jpg", '.png')))))
+        print(np.unique(cur_label))
+        cur_label[cur_label!=0]=1
         w, h = cur_image.shape
         cur_image = cur_image.reshape(1, w, h)
         cur_label = cur_label.reshape(1, w, h)
@@ -89,7 +91,7 @@ def process1():
     # generate json file
     generate_dataset_json(output_file=os.path.join(target_base, "dataset.json", ), imagesTr_dir=target_imagesTr,
                           imagesTs_dir=target_imagesTs, modalities=('gray',)
-                          , labels={0: 'background', 1: 'tumor'}, dataset_name='Task068_DDTI',
+                          , labels={0: 'background', 1: 'benign'}, dataset_name='Task069_BUSI',
                           license='hands_off')
 
 
